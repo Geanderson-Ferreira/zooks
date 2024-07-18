@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Reserva</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='find_reservation.css') }}">
+</head>
+<body>
+    <div class="centered-div">
+        <h1>Buscar Reserva</h1>
+        <form method="POST">
+            <label for="confirmation_number">Número de Confirmação:</label>
+            <input type="text" id="confirmation_number" name="confirmation_number"><br>
+
+            <label for="checkout_date">Data de Checkout:</label>
+            <input type="date" id="checkout_date" name="checkout_date"><br>
+
+            <label for="last_name">Sobrenome:</label>
+            <input type="text" id="last_name" name="last_name"><br>
+
+            <button type="submit">Buscar</button>
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if reservations %}
+            <h2>Resultados:</h2>
+            <ul>
+                {% for reservation in reservations %}
+                    <li>Confirmação: {{ reservation.confirmation_number }}, Checkout: {{ reservation.checkout_date }}, Sobrenome: {{ reservation.last_name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>
