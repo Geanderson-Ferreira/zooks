@@ -7,27 +7,13 @@ from token_manager import Token
 app = Flask(__name__)
 app.secret_key = 'some_secret_key'  # Necessário para usar flash messages e sessão
 
-# Configurações de segurança
-MAX_ATTEMPTS = 90
-BLOCK_TIME = timedelta(minutes=5)  # Tempo de bloqueio em minutos
+
 def resolve_from_form():
     pass
 
 
 def find_reservation_dealer(rid):
     
-    # Inicializa variáveis de tentativa na sessão
-    if 'attempts' not in session:
-        session['attempts'] = 0
-        session['blocked_until'] = None
-    session['blocked_until'] = None
-    flash(session['blocked_until'])
-    # Checa se o usuário está bloqueado
-    if session['blocked_until'] and datetime.now() < session['blocked_until']:
-        flash(f'Tentativas excedidas. Tente novamente após {session["blocked_until"].strftime("%H:%M:%S")}.')
-        return render_template('find_reservation.html', reservations=[])
-    
-
 
     #_______________CORE DA FUNCAO
 
@@ -80,22 +66,6 @@ def find_reservation_dealer(rid):
 
 
         ##----------- Melhorar
-
-        if not reservations_data:
-            session['attempts'] += 1
-            flash(f'Nenhuma reserva encontrada. Tentativa {session["attempts"]}/{MAX_ATTEMPTS}.')
-
-            if session['attempts'] >= MAX_ATTEMPTS:
-                session['blocked_until'] = datetime.now() + BLOCK_TIME
-                session['attempts'] = 0
-                flash(f'Tentativas excedidas. Tente novamente após {session["blocked_until"].strftime("%H:%M:%S")}.')
-
-            return render_template('find_reservation.html', reservations=[])
-
-        # Reiniciar contagem de tentativas após um sucesso
-        session['attempts'] = 0
-        return render_template('find_reservation.html', reservations=reservations_data)
-
     return render_template('find_reservation.html', reservations=[])
 
 if __name__ == '__main__':
